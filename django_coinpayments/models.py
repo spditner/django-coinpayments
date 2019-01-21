@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 class CoinPaymentsTransaction(TimeStampedModel):
     id = models.CharField(max_length=100, verbose_name=_('id'), primary_key=True, editable=True)
     address = models.CharField(max_length=150, verbose_name=_('Address'))
+    dest_tag = models.CharField(max_length=150, verbose_name=_('Payment ID'), blank=True, null=True)
     amount = models.DecimalField(max_digits=65, decimal_places=18, verbose_name=_('Amount'))
     confirms_needed = models.PositiveSmallIntegerField(verbose_name=_('Confirms needed'))
     qrcode_url = models.URLField(verbose_name=_('QR Code Url'))
@@ -138,6 +139,7 @@ class Payment(TimeStampedModel):
             c = CoinPaymentsTransaction.objects.create(id=result['txn_id'],
                                                        amount=Decimal(result['amount']),
                                                        address=result['address'],
+                                                       dest_tag=result.get('dest_tag'),
                                                        confirms_needed=int(result['confirms_needed']),
                                                        qrcode_url=result['qrcode_url'],
                                                        status_url=result['status_url'],
